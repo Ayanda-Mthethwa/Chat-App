@@ -1,0 +1,28 @@
+<div class="chat-wrapper">
+  <div class="chat-header">
+    Chatting with {{ recipientUsername }}
+  </div>
+
+  <div class="message-list">
+    @for (msg of chatService.messageThread(); track msg.id) {
+      <div class="message-item" 
+           [class.sent]="msg.senderUsername === authService.currentUser()?.username">
+        <div class="bubble">
+          <p>{{ msg.content }}</p>
+          <span class="time">{{ msg.messageSent | date:'shortTime' }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="chat-footer">
+    <input 
+      [(ngModel)]="newMessageContent" 
+      (keyup.enter)="sendMessage()"
+      placeholder="Type a message..."
+    />
+    <button (click)="sendMessage()" [disabled]="!newMessageContent.trim()">
+      Send
+    </button>
+  </div>
+</div>

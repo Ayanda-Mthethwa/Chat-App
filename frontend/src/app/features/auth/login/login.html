@@ -1,0 +1,25 @@
+<div class="auth-wrapper">
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="login-card">
+    <h2>Welcome Back</h2>
+    
+    <div class="form-group">
+      <label>Username</label>
+      <input 
+        type="text" 
+        name="username" 
+        [(ngModel)]="model.username" 
+        required>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input 
+        type="password" 
+        name="password" 
+        [(ngModel)]="model.password" 
+        required>
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.valid">Login</button>
+  </form>
+</div>

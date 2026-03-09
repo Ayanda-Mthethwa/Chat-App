@@ -1,0 +1,32 @@
+<div class="admin-panel">
+  <h1>Admin Dashboard</h1>
+  <p>Manage your Chat System members</p>
+
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <span [class]="user.isOnline ? 'badge-online' : 'badge-offline'">
+              {{ user.isOnline ? 'Online' : 'Offline' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-edit">Edit</button>
+            <button class="btn-delete">Remove</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
