@@ -6,7 +6,7 @@ using ChatSystem.API.Models;
 
 namespace ChatSystem.API.Controllers
 {
-    [Authorize(Roles = "Admin")] // Only users with 'Admin' in their JWT can enter
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -18,6 +18,7 @@ namespace ChatSystem.API.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("users")]
         public async Task<ActionResult<IEnumerable<object>>> GetUsers()
         {
@@ -36,6 +37,25 @@ namespace ChatSystem.API.Controllers
             return Ok(users);
         }
 
+        [Authorize]
+        [HttpGet("~/api/users")]
+        public async Task<ActionResult<IEnumerable<object>>> GetChatUsers()
+        {
+            var users = await _context.Users
+                .Select(u => new {
+                    u.Id,
+                    u.Username,
+                    u.Role,
+                    u.IsOnline,
+                    u.LastSeen,
+                    u.AvatarUrl
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("users/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

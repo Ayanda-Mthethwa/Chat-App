@@ -1,25 +1,79 @@
-<div class="auth-wrapper">
-  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="login-card">
-    <h2>Welcome Back</h2>
-    
-    <div class="form-group">
-      <label>Username</label>
-      <input 
-        type="text" 
-        name="username" 
-        [(ngModel)]="model.username" 
-        required>
+<div class="auth-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="auth-card">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <span class="material-symbols-outlined">chat</span>
+      </div>
+      <h1>Welcome back</h1>
+      <p class="brand-sub">Sign in to your account to continue</p>
     </div>
 
-    <div class="form-group">
-      <label>Password</label>
-      <input 
-        type="password" 
-        name="password" 
-        [(ngModel)]="model.password" 
-        required>
-    </div>
+    <!-- Form -->
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
 
-    <button type="submit" [disabled]="!loginForm.valid">Login</button>
-  </form>
+      <div class="field">
+        <label for="username">Username</label>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">person</span>
+          <input
+            id="username"
+            type="text"
+            name="username"
+            [(ngModel)]="model.username"
+            required
+            autocomplete="username"
+            placeholder="Enter your username"
+            [class.has-error]="loginError"
+          >
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label for="password">Password</label>
+        </div>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">lock</span>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="model.password"
+            required
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            [class.has-error]="loginError"
+          >
+          <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </div>
+
+      @if (loginError) {
+        <div class="error-banner">
+          <span class="material-symbols-outlined">error</span>
+          {{ loginError }}
+        </div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="!loginForm.valid || isLoading">
+        @if (isLoading) {
+          <span class="spinner"></span> Signing in...
+        } @else {
+          Sign In
+          <span class="material-symbols-outlined">arrow_forward</span>
+        }
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Don't have an account? <a routerLink="/auth/register">Create one</a>
+    </p>
+  </div>
 </div>

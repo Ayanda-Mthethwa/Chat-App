@@ -5,43 +5,64 @@ import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  // Use 'inject' at the top of the class for a cleaner look
   private authService = inject(AuthService);
   private hubConnection?: HubConnection;
-  
+
   messageThread = signal<Message[]>([]);
+  connectionEstablished = signal<boolean>(false);
 
-  // Keep the constructor empty or remove it if you aren't using it
-  constructor() {}
-
- createHubConnection(otherUsername: string) {
+  createHubConnection(otherUsername: string) {
     const user = this.authService.currentUser();
-    // 1. Guard clause to ensure user and token exist
     if (!user || !user.token) return;
-
-    // 2. Capture the token in a constant to prove to TS it's a string
-    const token = user.token;
 
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`http://localhost:5062/hubs/chat?user=${otherUsername}`, {
-        accessTokenFactory: () => token // Now TS knows this is 100% a string
+        accessTokenFactory: () => user.token!
       })
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch(error => console.log(error));
+    this.hubConnection.start()
+      .then(() => {
+        this.connectionEstablished.set(true);
+      })
+      .catch(error => {
+        console.log('Connection error: ', error);
+        this.connectionEstablished.set(false);
+      });
 
+    this.hubConnection.on('NewMessage', (message: Message) => {
+      this.messageThread.update(messages => [...messages, message]);
+    });
+
+    this.hubConnection.on('ReceiveMessageThread', (messages: Message[]) => {
+      this.messageThread.set(messages);
+    });
+
+    // When recipient opens the chat — mark all our sent messages as read
+    this.hubConnection.on('MessagesRead', (data: { reader: string; dateRead: Date }) => {
+      this.messageThread.update(messages =>
+        messages.map(m =>
+          m.senderUsername !== data.reader
+            ? { ...m, isDelivered: true, dateRead: data.dateRead }
+            : m
+        )
+      );
+    });
+
+    this.hubConnection.onclose(() => this.connectionEstablished.set(false));
   }
 
   stopHubConnection() {
     this.hubConnection?.stop().catch(error => console.log(error));
+    this.connectionEstablished.set(false);
     this.messageThread.set([]);
   }
 
   async sendMessage(recipientUsername: string, content: string) {
-    return this.hubConnection?.invoke('SendMessage', {
-      recipientUsername,
-      content
-    }).catch(error => console.log(error));
+    if (this.hubConnection?.state !== 'Connected') {
+      throw new Error('Cannot send message: Not connected to server.');
+    }
+    return this.hubConnection.invoke('SendMessage', recipientUsername, content);
   }
 }

@@ -1,0 +1,86 @@
+<div class="auth-bg">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="auth-card">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <span class="material-symbols-outlined">chat</span>
+      </div>
+      <h1>Create account</h1>
+      <p class="brand-sub">Join ChatApp and start messaging</p>
+    </div>
+
+    <!-- Form -->
+    <form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off" novalidate>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">person</span>
+          <input id="username" type="text" name="username" [(ngModel)]="model.username"
+                 required placeholder="Choose a username" autocomplete="username">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">mail</span>
+          <input id="email" type="email" name="email" [(ngModel)]="model.email"
+                 required placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">lock</span>
+          <input id="password" [type]="showPassword ? 'text' : 'password'" name="password"
+                 [(ngModel)]="model.password" required placeholder="Create a password" autocomplete="new-password">
+          <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-wrap">
+          <span class="input-icon material-symbols-outlined">lock_reset</span>
+          <input id="confirmPassword" [type]="showConfirm ? 'text' : 'password'" name="confirmPassword"
+                 [(ngModel)]="model.confirmPassword" required placeholder="Repeat your password" autocomplete="new-password">
+          <button type="button" class="toggle-pw" (click)="showConfirm = !showConfirm" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showConfirm ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </div>
+
+      @if (errors.length > 0) {
+        <div class="error-list">
+          @for (err of errors; track err) {
+            <div class="error-item">
+              <span class="material-symbols-outlined">error</span>
+              {{ err }}
+            </div>
+          }
+        </div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="!registerForm.valid || isLoading">
+        @if (isLoading) {
+          <span class="spinner"></span> Creating account...
+        } @else {
+          Create Account
+          <span class="material-symbols-outlined">arrow_forward</span>
+        }
+      </button>
+
+    </form>
+
+    <p class="auth-footer">
+      Already have an account? <a routerLink="/auth/login">Sign in</a>
+    </p>
+  </div>
+</div>

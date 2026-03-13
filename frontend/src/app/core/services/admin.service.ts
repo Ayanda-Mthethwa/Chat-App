@@ -10,4 +10,8 @@ export class AdminService {
   getAllUsers() {
     return this.http.get<User[]>(this.baseUrl + 'users');
   }
+
+  getUserList() {
+    return this.http.get<User[]>(this.baseUrl + 'list');
+  }
 }

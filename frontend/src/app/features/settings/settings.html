@@ -1,0 +1,170 @@
+<div class="app-shell">
+
+  <!-- Nav Rail -->
+  <nav class="nav-rail">
+    <div class="nav-brand">
+      <div class="brand-mark">
+        <span class="material-symbols-outlined">chat</span>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      @if (authService.currentUser()?.role === 'Admin') {
+        <a routerLink="/features/admin" class="nav-btn" title="Dashboard">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="nav-label">Chats</span>
+        </a>
+      } @else {
+        <a routerLink="/features/chat" class="nav-btn" title="Chats">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="nav-label">Chats</span>
+        </a>
+      }
+      <a routerLink="/features/settings" class="nav-btn active" title="Settings">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">settings</span>
+        <span class="nav-label">Settings</span>
+      </a>
+    </div>
+
+    <div class="nav-footer">
+      <div class="nav-user-card">
+        <div class="nav-avatar">
+          {{ authService.currentUser()?.username?.charAt(0)?.toUpperCase() }}
+        </div>
+        <span class="nav-username">{{ authService.currentUser()?.username }}</span>
+        <a class="nav-logout-btn" routerLink="/auth/login" (click)="authService.logout()" title="Logout">
+          <span class="material-symbols-outlined">logout</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Settings Content -->
+  <div class="settings-body">
+    <div class="settings-content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <h1>Settings</h1>
+        <p>Manage your account and preferences</p>
+      </div>
+
+      <!-- Profile Card -->
+      <section class="settings-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon">badge</span>
+          <h2>Profile</h2>
+        </div>
+        <div class="profile-row">
+          <div class="profile-avatar-lg">
+            {{ authService.currentUser()?.username?.charAt(0)?.toUpperCase() }}
+          </div>
+          <div class="profile-details">
+            <h3>{{ authService.currentUser()?.username }}</h3>
+            <span class="role-badge">{{ authService.currentUser()?.role }}</span>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Username</span>
+            <span class="info-value">{{ authService.currentUser()?.username }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Role</span>
+            <span class="info-value">{{ authService.currentUser()?.role }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications Card -->
+      <section class="settings-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon">notifications</span>
+          <h2>Notifications</h2>
+        </div>
+        <div class="toggle-list">
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <p class="toggle-title">Direct Messages</p>
+              <p class="toggle-desc">Get notified when you receive a new message</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <p class="toggle-title">Sound Alerts</p>
+              <p class="toggle-desc">Play a sound when a new message arrives</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <p class="toggle-title">Online Status</p>
+              <p class="toggle-desc">Show others when you are online</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security Card -->
+      <section class="settings-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon">security</span>
+          <h2>Security</h2>
+        </div>
+        <div class="action-list">
+          <div class="action-item">
+            <div class="action-left">
+              <span class="material-symbols-outlined action-icon">key</span>
+              <div>
+                <p class="action-title">Change Password</p>
+                <p class="action-desc">Update your account password</p>
+              </div>
+            </div>
+            <button class="btn-secondary">Update</button>
+          </div>
+          <div class="action-item">
+            <div class="action-left">
+              <span class="material-symbols-outlined action-icon">devices</span>
+              <div>
+                <p class="action-title">Active Sessions</p>
+                <p class="action-desc">Manage devices where you're signed in</p>
+              </div>
+            </div>
+            <button class="btn-secondary">View All</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Danger Zone -->
+      <section class="settings-card danger-card">
+        <div class="card-header">
+          <span class="material-symbols-outlined card-icon danger">logout</span>
+          <h2>Account</h2>
+        </div>
+        <div class="action-item">
+          <div class="action-left">
+            <span class="material-symbols-outlined action-icon danger">logout</span>
+            <div>
+              <p class="action-title">Sign Out</p>
+              <p class="action-desc">Sign out from all devices</p>
+            </div>
+          </div>
+          <a routerLink="/auth/login" (click)="authService.logout()" class="btn-danger">Sign Out</a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</div>
