@@ -12,7 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 // --- 1. SERVICES CONFIGURATION (Before builder.Build) ---
 
 // Database Context (PostgreSQL)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Render provides connection string as a URI (postgres://...), convert to Npgsql key-value format
+var rawConnectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+var connectionString = rawConnectionString;
+if (rawConnectionString.StartsWith("postgres://") || rawConnectionString.StartsWith("postgresql://"))
+{
+    var uri = new Uri(rawConnectionString);
+    var userInfo = uri.UserInfo.Split(':');
+    connectionString = $"Host={uri.Host};Port={Math.Max(uri.Port, 5432)};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={Uri.UnescapeDataString(userInfo[1])};SSL Mode=Require;Trust Server Certificate=true";
+}
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
