@@ -11,10 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // --- 1. SERVICES CONFIGURATION (Before builder.Build) ---
 
-// Database Context (MySQL)
+// Database Context (PostgreSQL)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseNpgsql(connectionString));
 
 // SignalR for Real-Time
 builder.Services.AddSignalR();
@@ -55,12 +55,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// CORS Policy
+// CORS Policy — origins from config so production URL can be injected via env var
+var allowedOrigins = builder.Configuration["AllowedOrigins"]?.Split(',')
+    ?? new[] { "http://localhost:4200" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -79,7 +81,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+// Auto-create tables on first run (no migrations needed)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.EnsureCreated();
+}
 
 // UseCors must come BEFORE Authentication
 app.UseCors("AllowAngular");

@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { Message } from '../models/chat.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -16,7 +17,7 @@ export class ChatService {
     if (!user || !user.token) return;
 
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`http://localhost:5062/hubs/chat?user=${otherUsername}`, {
+      .withUrl(`${environment.apiUrl}/hubs/chat?user=${otherUsername}`, {
         accessTokenFactory: () => user.token!
       })
       .withAutomaticReconnect()

@@ -3,13 +3,14 @@ import { Injectable, signal, inject } from '@angular/core';
 import { map } from 'rxjs';
 import { User } from '../models/user.model';
 import { PresenceService } from './presence.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private presenceService = inject(PresenceService);
 
-  baseUrl = 'http://localhost:5062/api/'; 
+  baseUrl = environment.apiUrl + '/api/';
   currentUser = signal<User | null>(null); // Global state
 
   login(model: any) {

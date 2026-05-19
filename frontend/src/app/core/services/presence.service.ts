@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { environment } from '../../../environments/environment';
 
 export interface OnlineUser {
   id: number;
@@ -20,7 +21,7 @@ export class PresenceService {
     if (this.hubConnection) return;
 
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl('http://localhost:5062/hubs/presence', {
+      .withUrl(`${environment.apiUrl}/hubs/presence`, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
