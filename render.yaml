@@ -25,19 +25,3 @@ services:
       - key: AllowedOrigins
         sync: false           # Set to your frontend URL after deploying frontend
 
-  # Frontend — Angular static site
-  - type: static
-    name: chat-app-frontend
-    buildCommand: >
-      cd frontend &&
-      npm install &&
-      sed -i "s|__API_URL__|$API_URL|g" src/environments/environment.production.ts &&
-      npm run build
-    staticPublishPath: frontend/dist/frontend/browser
-    envVars:
-      - key: API_URL
-        sync: false           # Set to your backend URL e.g. https://chat-app-api.onrender.com
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
